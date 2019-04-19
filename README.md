@@ -1,38 +1,38 @@
-# ArtecRobo2.0 MicroPython ƒ‰ƒCƒuƒ‰ƒŠ
+# ArtecRobo2.0 MicroPython ãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 
-## –{ƒ\ƒtƒgƒEƒFƒA
-–{ƒ\ƒtƒgƒEƒFƒA‚ÍAŠ”®‰ïĞƒA[ƒeƒbƒN‚ªŠJ”­E”Ì”„‚µ‚Ä‚¨‚è‚Ü‚·ƒƒ{ƒbƒgƒvƒƒOƒ‰ƒ~ƒ“ƒO‹³Ş"ArtecRobo2.0"‚ÌŒÃƒ{ƒbƒgŠg’£ƒ†ƒjƒbƒg‚ğ§Œä‚·‚éMicroPython—pƒ‰ƒCƒuƒ‰ƒŠ‚Ìƒ\[ƒXƒR[ƒh‚Å‚·B
+## æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢
+æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã¯ã€æ ªå¼ä¼šç¤¾ã‚¢ãƒ¼ãƒ†ãƒƒã‚¯ãŒé–‹ç™ºãƒ»è²©å£²ã—ã¦ãŠã‚Šã¾ã™ãƒ­ãƒœãƒƒãƒˆãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°æ•™æ"ArtecRobo2.0"ã®ãƒ­ãƒœãƒƒãƒˆæ‹¡å¼µãƒ¦ãƒ‹ãƒƒãƒˆã‚’åˆ¶å¾¡ã™ã‚‹MicroPythonç”¨ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã§ã™ã€‚
 
-## ‘Î‰OS
+## å¯¾å¿œOS
 [StuduinoBit_MicroPython](https://github.com/artec-kk/StuduinoBit_MicroPython)
 
-## ƒtƒB[ƒhƒoƒbƒN‚É‚Â‚¢‚Ä
-–{ƒ\ƒtƒgƒEƒFƒA‚É‘Î‚·‚é‚²w“EA‰ü‘P—v–]‚É‚Â‚¢‚Ä‚Í [Issues](/issues) ‚Ö‚¨Šè‚¢‚¢‚½‚µ‚Ü‚·B
+## ãƒ•ã‚£ãƒ¼ãƒ‰ãƒãƒƒã‚¯ã«ã¤ã„ã¦
+æœ¬ã‚½ãƒ•ãƒˆã‚¦ã‚§ã‚¢ã«å¯¾ã™ã‚‹ã”æŒ‡æ‘˜ã€æ”¹å–„è¦æœ›ã«ã¤ã„ã¦ã¯ [Issues](/issues) ã¸ãŠé¡˜ã„ã„ãŸã—ã¾ã™ã€‚
 
-## ƒ‰ƒCƒZƒ“ƒX‚Æ–ÆÓ–€
+## ãƒ©ã‚¤ã‚»ãƒ³ã‚¹ã¨å…è²¬äº‹é …
 MIT
 
-## ƒCƒ“ƒXƒg[ƒ‹•û–@
-MicroPython”z•zƒpƒbƒP[ƒW [micropython-artecrobo2.0](https://pypi.org/project/micropython-artecrobo2.0/)‚Å”z•z‚µ‚Ä‚¢‚Ü‚·BupipƒpƒbƒP[ƒWƒ}ƒl[ƒWƒƒ‚ğg—p‚µ‚ÄƒCƒ“ƒXƒg[ƒ‹‚·‚é•û–@‚ğ‰º‹L‚É‹L‚µ‚Ü‚·B
+## ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«æ–¹æ³•
+MicroPythoné…å¸ƒãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ [micropython-artecrobo2.0](https://pypi.org/project/micropython-artecrobo2.0/)ã§é…å¸ƒã—ã¦ã„ã¾ã™ã€‚upipãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ãƒãƒãƒ¼ã‚¸ãƒ£ã‚’ä½¿ç”¨ã—ã¦ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã™ã‚‹æ–¹æ³•ã‚’ä¸‹è¨˜ã«è¨˜ã—ã¾ã™ã€‚
 
-### ƒlƒbƒgƒ[ƒNÚ‘±
-StuduinoBit_MicroPython‚ÌREPL‚Å‰º‹L‚Ì‚æ‚¤‚ÉÀs‚µAƒCƒ“ƒ^[ƒlƒbƒg‚ÉŒq‚ª‚Á‚Ä‚¢‚éWiFi‚ÆÚ‘±‚µ‚Ä‚­‚¾‚³‚¢B
+### ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯æ¥ç¶š
+StuduinoBit_MicroPythonã®REPLã§ä¸‹è¨˜ã®ã‚ˆã†ã«å®Ÿè¡Œã—ã€ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒƒãƒˆã«ç¹‹ãŒã£ã¦ã„ã‚‹WiFiã¨æ¥ç¶šã—ã¦ãã ã•ã„ã€‚
 
 `>>> import network`<br>
 `>>> sta = network.WLAN(network.STA_IF)`<br>
 `>>> sta.active(True)`<br>
 `>>> sta.connect("SSID", "PASSWORD")`<br>
 
-¦"SSID"‚Æ"PASSWORD"‚ÍAg—p‚³‚ê‚éŠÂ‹«‚É‡‚í‚¹‚Äİ’è‚µ‚Ä‚­‚¾‚³‚¢B
+â€»"SSID"ã¨"PASSWORD"ã¯ã€ä½¿ç”¨ã•ã‚Œã‚‹ç’°å¢ƒã«åˆã‚ã›ã¦è¨­å®šã—ã¦ãã ã•ã„ã€‚
 
-### ƒ‰ƒCƒuƒ‰ƒŠ‚ÌƒCƒ“ƒXƒg[ƒ‹
+### ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«
 
 `>>> import upip`<br>
 `>>> upip.install("micropython-artecrobo2.0")`<br>
 
-## g‚¢•û
+## ä½¿ã„æ–¹
 
-[ƒƒ{ƒbƒgŠg’£ƒ†ƒjƒbƒg—pƒŠƒtƒ@ƒŒƒ“ƒX](https://www.artec-kk.co.jp/artecrobo2/ja/software/python.php)QÆ
+[ãƒ­ãƒœãƒƒãƒˆæ‹¡å¼µãƒ¦ãƒ‹ãƒƒãƒˆç”¨ãƒªãƒ•ã‚¡ãƒ¬ãƒ³ã‚¹](https://www.artec-kk.co.jp/artecrobo2/ja/software/python.php)å‚ç…§
 
 ## Author
 [Artec Co., Ltd. Development team](https://github.com/artec-kk)  
