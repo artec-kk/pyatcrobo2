@@ -13,7 +13,7 @@
 MIT
 
 ## インストール方法
-MicroPython配布パッケージ [micropython-artecrobo2](https://pypi.org/project/micropython-artecrobo2/)で配布しています。upipパッケージマネージャを使用してインストールする方法を下記に記します。
+MicroPython配布パッケージ [micropython-artecrobo2.0](https://pypi.org/project/micropython-artecrobo2.0/)で配布しています。upipパッケージマネージャを使用してインストールする方法を下記に記します。
 
 ### ネットワーク接続
 StuduinoBit_MicroPythonのREPLで下記のように実行し、インターネットに繋がっているWiFiと接続してください。
@@ -28,7 +28,7 @@ StuduinoBit_MicroPythonのREPLで下記のように実行し、インターネットに繋がっているW
 ### ライブラリのインストール
 
 `>>> import upip`<br>
-`>>> upip.install("micropython-artecrobo2")`<br>
+`>>> upip.install("micropython-artecrobo2.0")`<br>
 
 ## 使い方
 
