@@ -32,7 +32,7 @@ StuduinoBit_MicroPythonのREPLで下記のように実行し、インターネ�
 
 ## 使い方
 
-[ロボット拡張ユニット用リファレンス](https://www.artec-kk.co.jp/artecrobo2/ja/software/python.php)参照
+ロボット拡張ユニット用リファレンス 参照 (現在作成中)
 
 ## Author
 [Artec Co., Ltd. Development team](https://github.com/artec-kk)  
