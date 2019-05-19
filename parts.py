@@ -24,9 +24,11 @@ Kenji Kawase, Artec Co., Ltd.
 """
 from micropython import const
 from . import body, wire
-from .const import Tone, DCCntrl, ACCConfig
+from .const import Tone, DCCntrl, ACCConfig, ColorSensorConfig
 import time
 import ustruct
+import machine
+import sys
 
 
 class InputParts():
@@ -345,6 +347,119 @@ class Temperature(InputParts):
 
     def get_celsius(self):
         return (self._terminalpin.read_analog(mv=True) - 500) / 10
+
+
+class UltrasonicSensor(InputParts):
+    def __init__(self, pin):
+
+        super().__init__(pin)
+        self._terminalpin.write_digital(0)
+        self.echo_timeout_us = 30000
+
+    def get_pulse_time(self):
+        self._terminalpin.write_digital(0)
+        time.sleep_us(10)
+        self._terminalpin.write_digital(1)
+        time.sleep_us(20)
+        self._terminalpin.write_digital(0)
+        time.sleep_us(100)
+        try:
+            pin = machine.Pin(self._terminalpin.pin, mode=machine.Pin.IN, pull=None)
+            pulse_time = machine.time_pulse_us(pin, 1, self.echo_timeout_us)
+        except OSError as e:
+            if e.arge[0] == 110:
+                raise OSError('Out of range')
+            raise e
+            
+        self._terminalpin.write_digital(0)
+        return pulse_time
+
+    def get_distance(self):
+        pulse_time = self.get_pulse_time()
+        range = pulse_time / 58.0   # 29us = 1cm
+        range = int(range * 100) / 100.0
+        return range
+
+
+class ColorSensor(I2CParts, ColorSensorConfig):
+
+    def __init__(self, pin):
+        super().__init__(pin)
+        self.__addr = ColorSensor.I2C_ADDR
+        self.__wire = wire.Wire(self._i2c._i2c)
+        # self._i2c.init(freq=10000)
+        self.__i2c_send(ColorSensor.GET_COLOR_RGB)
+        self.red = 0
+        self.green = 0
+        self.blue = 0
+        self.readingdata = [0,0,0,0]
+
+    def get_value(self, num=4):
+        try:
+            self.__i2c_send(ColorSensor.GET_COLOR_RGB)
+            time.sleep_us(50)
+            self.__wire.requestFrom(self.__addr, num)
+        except:
+            print('hello')
+            return None
+
+        if self.__wire.available():
+            for i in range(num):
+                self.readingdata[i] = self.__wire.read()
+                print(self.readingdata[i], end='')
+                print('\t', end='')
+            print()
+
+            self.red = self.readingdata[0]
+            self.green = self.readingdata[1]
+            self.blue = self.readingdata[2]
+        
+            return self.readingdata
+        else:
+            return None
+
+    def get_colorcode(self):
+        self.get_value()
+        self.__clac_xy_code()
+
+        print(self.x, end='')
+        print('\t', end='')
+        print(self.y, end='')
+        print('\t', end='')
+        print()
+
+
+        if (self.red <= LOST_THRESHOLD) and (self.green <= LOST_THRESHOLD) and (self.blue <= LOST_THRESHOLD):
+            return COLOR_UNDEF
+        if (self.x >= MIN_X_RED) and (self.x <= MAX_X_RED) and (self.y >= MIN_Y_RED) and (self.y <= MAX_Y_RED):
+            return COLOR_RED
+        if (self.x >= MIN_X_GREEN) and (self.x <= MAX_X_GREEN) and (self.y >= MIN_Y_GREEN) and (self.y <= MAX_Y_GREEN):
+            return COLOR_GREEN
+        if (self.x >= MIN_X_BLUE) and (self.x <= MAX_X_BLUE) and (self.y >= MIN_Y_BLUE) and (self.y <= MAX_Y_BLUE):
+            return COLOR_BLUE
+        if (self.x >= MIN_X_WHITE) and (self.x <= MAX_X_WHITE) and (self.y >= MIN_Y_WHITE) and (self.y <= MAX_Y_WHITE):
+            return COLOR_WHITE
+        if (self.x >= MIN_X_YELLOW) and (self.x <= MAX_X_YELLOW) and (self.y >= MIN_Y_YELLOW) and (self.y <= MAX_Y_YELLOW):
+            return COLOR_YELLOW
+        if (self.x >= MIN_X_ORANGE) and (self.x <= MAX_X_ORANGE) and (self.y >= MIN_Y_ORANGE) and (self.y <= MAX_Y_ORANGE):
+            return COLOR_ORANGE
+        if (self.x >= MIN_X_PURPLE) and (self.x <= MAX_X_PURPLE) and (self.y >= MIN_Y_PURPLE) and (self.y <= MAX_Y_PURPLE):
+            return COLOR_PURPLE
+            
+        return COLOR_UNDEF
+
+    def __clac_xy_code(self):
+        X = (0.576669) * self.red + (0.185558) * self.green + (0.188229) * self.blue
+        Y = (0.297345) * self.red + (0.627364) * self.green + (0.075291) * self.blue
+        Z = (0.027031) * self.red + (0.070689) * self.green + (0.991338) * self.blue
+        self.x = X / (X + Y + Z)
+        self.y = Y / (X + Y + Z)
+
+    def __i2c_send(self, command):
+        # Set to status reg
+        self.__wire.beginTransmission(self.__addr)
+        self.__wire.write(command)
+        self.__wire.endTransmission()
 
 
 __MMA_8653_ADDRESS = const(0x1d)
