@@ -1,3 +1,54 @@
+class ColorSensorConfig:
+    I2C_ADDR = 0x36
+    GET_COLOR_RGB = 0x63
+    LED_ENABLE_R = 0x52
+    LED_ENABLE_G = 0x47
+    LED_ENABLE_B = 0x42
+    LED_DISABLE = 0x44
+
+    # Color code
+    COLOR_UNDEF = 0
+    COLOR_RED = 1
+    COLOR_GREEN = 2
+    COLOR_BLUE = 3
+    COLOR_WHITE = 4
+    COLOR_YELLOW = 5
+    COLOR_ORANGE = 6
+    COLOR_PURPLE = 7
+
+    # for Artec Block
+
+    LOST_THRESHOLD = 25  #  8bit
+    MIN_X_RED    = 0.37
+    MAX_X_RED    = 0.48
+    MIN_Y_RED    = 0.28
+    MAX_Y_RED    = 0.36
+    MIN_X_GREEN  = 0.23
+    MAX_X_GREEN  = 0.33
+    MIN_Y_GREEN  = 0.35
+    MAX_Y_GREEN  = 0.46
+    MIN_X_BLUE   = 0.20
+    MAX_X_BLUE   = 0.31
+    MIN_Y_BLUE   = 0.20
+    MAX_Y_BLUE   = 0.28
+    MIN_X_WHITE  = 0.30
+    MAX_X_WHITE  = 0.37
+
+    MIN_Y_WHITE  = 0.30
+    MAX_Y_WHITE  = 0.35
+    MIN_X_YELLOW = 0.34
+    MAX_X_YELLOW = 0.47
+    MIN_Y_YELLOW = 0.36
+    MAX_Y_YELLOW = 0.45
+    MIN_X_ORANGE = 0.44
+    MAX_X_ORANGE = 0.55
+    MIN_Y_ORANGE = 0.33
+    MAX_Y_ORANGE = 0.38
+    MIN_X_PURPLE = 0.22
+    MAX_X_PURPLE = 0.31
+    MIN_Y_PURPLE = 0.28
+    MAX_Y_PURPLE = 0.32
+  
 
 class ACCConfig:
     G_2 = 2
