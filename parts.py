@@ -387,7 +387,7 @@ class ColorSensor(I2CParts, ColorSensorConfig):
         super().__init__(pin)
         self.__addr = ColorSensor.I2C_ADDR
         self.__wire = wire.Wire(self._i2c._i2c)
-        # self._i2c.init(freq=10000)
+        self._i2c._i2c.init(scl=machine.Pin(22), sda=machine.Pin(21), freq=250000, timeout=0xfffff)
         self.__i2c_send(ColorSensor.GET_COLOR_RGB)
         self.red = 0
         self.green = 0
@@ -399,16 +399,13 @@ class ColorSensor(I2CParts, ColorSensorConfig):
             self.__i2c_send(ColorSensor.GET_COLOR_RGB)
             time.sleep_us(50)
             self.__wire.requestFrom(self.__addr, num)
-        except:
-            print('hello')
+        except Exception as e:
+            print(e)
             return None
 
         if self.__wire.available():
             for i in range(num):
                 self.readingdata[i] = self.__wire.read()
-                print(self.readingdata[i], end='')
-                print('\t', end='')
-            print()
 
             self.red = self.readingdata[0]
             self.green = self.readingdata[1]
@@ -422,31 +419,32 @@ class ColorSensor(I2CParts, ColorSensorConfig):
         self.get_value()
         self.__clac_xy_code()
 
-        print(self.x, end='')
-        print('\t', end='')
-        print(self.y, end='')
-        print('\t', end='')
-        print()
-
-
-        if (self.red <= LOST_THRESHOLD) and (self.green <= LOST_THRESHOLD) and (self.blue <= LOST_THRESHOLD):
-            return COLOR_UNDEF
-        if (self.x >= MIN_X_RED) and (self.x <= MAX_X_RED) and (self.y >= MIN_Y_RED) and (self.y <= MAX_Y_RED):
-            return COLOR_RED
-        if (self.x >= MIN_X_GREEN) and (self.x <= MAX_X_GREEN) and (self.y >= MIN_Y_GREEN) and (self.y <= MAX_Y_GREEN):
-            return COLOR_GREEN
-        if (self.x >= MIN_X_BLUE) and (self.x <= MAX_X_BLUE) and (self.y >= MIN_Y_BLUE) and (self.y <= MAX_Y_BLUE):
-            return COLOR_BLUE
-        if (self.x >= MIN_X_WHITE) and (self.x <= MAX_X_WHITE) and (self.y >= MIN_Y_WHITE) and (self.y <= MAX_Y_WHITE):
-            return COLOR_WHITE
-        if (self.x >= MIN_X_YELLOW) and (self.x <= MAX_X_YELLOW) and (self.y >= MIN_Y_YELLOW) and (self.y <= MAX_Y_YELLOW):
-            return COLOR_YELLOW
-        if (self.x >= MIN_X_ORANGE) and (self.x <= MAX_X_ORANGE) and (self.y >= MIN_Y_ORANGE) and (self.y <= MAX_Y_ORANGE):
-            return COLOR_ORANGE
-        if (self.x >= MIN_X_PURPLE) and (self.x <= MAX_X_PURPLE) and (self.y >= MIN_Y_PURPLE) and (self.y <= MAX_Y_PURPLE):
-            return COLOR_PURPLE
+        if (self.red <= ColorSensor.LOST_THRESHOLD) and (self.green <= ColorSensor.LOST_THRESHOLD) and \
+            (self.blue <= ColorSensor.LOST_THRESHOLD):
+            return ColorSensor.COLOR_UNDEF
+        if (self.x >= ColorSensor.MIN_X_RED) and (self.x <= ColorSensor.MAX_X_RED) and \
+            (self.y >= ColorSensor.MIN_Y_RED) and (self.y <= ColorSensor.MAX_Y_RED):
+            return ColorSensor.COLOR_RED
+        if (self.x >= ColorSensor.MIN_X_GREEN) and (self.x <= ColorSensor.MAX_X_GREEN) and \
+            (self.y >= ColorSensor.MIN_Y_GREEN) and (self.y <= ColorSensor.MAX_Y_GREEN):
+            return ColorSensor.COLOR_GREEN
+        if (self.x >= ColorSensor.MIN_X_BLUE) and (self.x <= ColorSensor.MAX_X_BLUE) and \
+            (self.y >= ColorSensor.MIN_Y_BLUE) and (self.y <= ColorSensor.MAX_Y_BLUE):
+            return ColorSensor.COLOR_BLUE
+        if (self.x >= ColorSensor.MIN_X_WHITE) and (self.x <= ColorSensor.MAX_X_WHITE) and \
+            (self.y >= ColorSensor.MIN_Y_WHITE) and (self.y <= ColorSensor.MAX_Y_WHITE):
+            return ColorSensor.COLOR_WHITE
+        if (self.x >= ColorSensor.MIN_X_YELLOW) and (self.x <= ColorSensor.MAX_X_YELLOW) and \
+            (self.y >= ColorSensor.MIN_Y_YELLOW) and (self.y <= ColorSensor.MAX_Y_YELLOW):
+            return ColorSensor.COLOR_YELLOW
+        if (self.x >= ColorSensor.MIN_X_ORANGE) and (self.x <= ColorSensor.MAX_X_ORANGE) and \
+            (self.y >= ColorSensor.MIN_Y_ORANGE) and (self.y <= ColorSensor.MAX_Y_ORANGE):
+            return ColorSensor.COLOR_ORANGE
+        if (self.x >= ColorSensor.MIN_X_PURPLE) and (self.x <= ColorSensor.MAX_X_PURPLE) and \
+            (self.y >= ColorSensor.MIN_Y_PURPLE) and (self.y <= ColorSensor.MAX_Y_PURPLE):
+            return ColorSensor.COLOR_PURPLE
             
-        return COLOR_UNDEF
+        return ColorSensor.COLOR_UNDEF
 
     def __clac_xy_code(self):
         X = (0.576669) * self.red + (0.185558) * self.green + (0.188229) * self.blue
@@ -608,6 +606,16 @@ class Accelerometer(I2CParts, ACCConfig):
         self._active()
 
     def configuration(self, highres, scale):
+
+        if type(scale) is int:
+            if not (scale == 2 or scale == 4 or scale == 8):
+                raise ValueError("scall param is 2, 4, or 8")
+        else:
+            raise TypeError("scall param is 2, 4, or 8")
+            
+        if type(highres) is not bool:
+            raise TypeError('higres param is True / False')
+
         self._begin(highres, scale)
 
     def get_x(self):
