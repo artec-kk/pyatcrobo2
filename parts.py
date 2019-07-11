@@ -408,7 +408,6 @@ class ColorSensor(I2CParts, ColorSensorConfig):
                 time.sleep_us(50)
                 self.__wire.requestFrom(self.__addr, 4)
             except Exception as e:
-                return None
                 try_count += 1
                 continue
 
