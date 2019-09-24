@@ -351,6 +351,9 @@ class Temperature(InputParts):
 
 class UltrasonicSensor(InputParts):
     def __init__(self, pin):
+        if type(pin) is str:
+            if not((pin is 'P0') or (pin is 'P1')):
+                raise TypeError("This parts can connect only 'P0','P1'")
 
         super().__init__(pin)
         self._terminalpin.write_digital(0)
@@ -394,29 +397,40 @@ class ColorSensor(I2CParts, ColorSensorConfig):
         self.blue = 0
         self.readingdata = [0,0,0,0]
 
-    def get_value(self, num=4):
-        try:
-            self.__i2c_send(ColorSensor.GET_COLOR_RGB)
-            time.sleep_us(50)
-            self.__wire.requestFrom(self.__addr, num)
-        except Exception as e:
-            print(e)
-            return None
+    def get_values(self, tt=5):
+        try_count = 0
+        while True:
+            if (try_count > tt):
+                raise RuntimeError("ColorSensor can't get valid values")
+          
+            try:
+                self.__i2c_send(ColorSensor.GET_COLOR_RGB)
+                time.sleep_us(50)
+                self.__wire.requestFrom(self.__addr, 4)
+            except Exception as e:
+                try_count += 1
+                continue
 
-        if self.__wire.available():
-            for i in range(num):
-                self.readingdata[i] = self.__wire.read()
+            if self.__wire.available():
+                for i in range(4):
+                    self.readingdata[i] = self.__wire.read()
 
-            self.red = self.readingdata[0]
-            self.green = self.readingdata[1]
-            self.blue = self.readingdata[2]
-        
-            return self.readingdata
-        else:
-            return None
+                
+                if self.readingdata == [255,255,255,255]:
+                    try_count += 1
+                    continue
+
+                self.red = self.readingdata[0]
+                self.green = self.readingdata[1]
+                self.blue = self.readingdata[2]
+            
+                return self.readingdata
+            else:
+                try_count += 1
+                continue
 
     def get_colorcode(self):
-        self.get_value()
+        self.get_values()
         self.__clac_xy_code()
 
         if (self.red <= ColorSensor.LOST_THRESHOLD) and (self.green <= ColorSensor.LOST_THRESHOLD) and \
