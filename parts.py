@@ -430,7 +430,7 @@ class ColorSensor(I2CParts, ColorSensorConfig):
                 continue
 
     def get_colorcode(self):
-        self.get_value()
+        self.get_values()
         self.__clac_xy_code()
 
         if (self.red <= ColorSensor.LOST_THRESHOLD) and (self.green <= ColorSensor.LOST_THRESHOLD) and \
