@@ -424,7 +424,7 @@ class ColorSensor(I2CParts, ColorSensorConfig):
                 self.green = self.readingdata[1]
                 self.blue = self.readingdata[2]
             
-                return self.readingdata
+                return list(self.readingdata)
             else:
                 try_count += 1
                 continue
