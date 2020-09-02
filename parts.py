@@ -378,6 +378,9 @@ class UltrasonicSensor(InputParts):
         return pulse_time
 
     def get_distance(self):
+        pin = machine.Pin(self._terminalpin.pin, mode=machine.Pin.IN, pull=None)
+        pulse_time = machine.time_pulse_us(pin, 0, 0)
+      
         pulse_time = self.get_pulse_time()
         range = pulse_time / 58.0   # 29us = 1cm
         range = int(range * 100) / 100.0
