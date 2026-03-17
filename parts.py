@@ -520,8 +520,117 @@ __MMA_8653_ODR_1_56 = const(0x38)
 def s16(value):
     return -(value & 0x8000) | (value & 0x7fff)
 
+def s8(v):
+    return v - 256 if v >= 0x80 else v
 
 class Accelerometer(I2CParts, ACCConfig):
+    def __init__(self, pin):
+        super().__init__(pin)
+        print(self._i2c._i2c.scan())
+        if 29 in (self._i2c._i2c.scan()):
+            # v1.0
+            self._acc = MMA8653(pin)
+
+        else:
+            # v2.0 (addr: 98)
+            self._acc = MSA311(pin)
+            pass
+
+    def get_x(self):
+        return self._acc.get_x()
+
+    def get_y(self):
+        return self._acc.get_y()
+
+    def get_z(self):
+        return self._acc.get_z()
+
+    def get_values(self):
+        return self._acc.get_values()
+
+
+class MSA311(I2CParts, ACCConfig):
+    # https://cdn-shop.adafruit.com/product-files/5309/MSA311-V1.1-ENG.pdf
+    I2CADDR = const(0x62)
+    REG_PARTID = const(0x01)
+    REG_OUT_X_L = const(0x02)
+    REG_RESRANGE = const(0x0F)
+    REG_ODR = const(0x10)
+    REG_POWERMODE = const(0x11)
+    DEF_RESRANGE = const(0x0C)   # 2G / 8bit
+    DEF_ODR = const(0x07)        # all axis enable / 125Hz
+    DEF_POWERMODE = const(0x12)  # normal mode / 250Hz
+
+    def __init__(self, pin):
+        super().__init__(pin)
+        self.__wire = wire.Wire(self._i2c._i2c)
+        self._begin(False, 2)
+
+    def get_x(self):
+        return self.get_values()[0]
+
+    def get_y(self):
+        return self.get_values()[1]
+
+    def get_z(self):
+        return self.get_values()[2]
+
+    def get_values(self):
+        self.__wire.beginTransmission(MSA311.I2CADDR)
+        self.__wire.write(MSA311.REG_OUT_X_L)
+        self.__wire.endTransmission(False)
+        self.__wire.requestFrom(MSA311.I2CADDR, 6)
+        axis = []
+        if (self.__wire.available()):
+            for _ in range(6):
+                axis.append(self.__wire.read())
+
+        scale = 128
+        self.yg = -1 * s8(axis[1]) / scale * 2
+        self.xg = -1 * s8(axis[3]) / scale * 2
+        self.zg = s8(axis[5]) / scale * 2
+ 
+        return self.xg, self.yg, self.zg
+
+    def _begin(self, highres, scale):
+        self._highres = highres
+        if self._highres:
+            self._step_factor = 0.0039
+        else:
+            self._step_factor = 0.0156
+
+        if (scale == 4):
+            self._step_factor *= 2
+        elif (scale == 8):
+            self._step_factor *= 4
+
+        self.__wire.begin()
+
+        self.__wire.beginTransmission(MSA311.I2CADDR)
+        self.__wire.write(MSA311.REG_PARTID)
+        self.__wire.endTransmission(False)
+        self.__wire.requestFrom(MSA311.I2CADDR, 1)
+        register_data = self.__wire.read()
+
+        # set ODR regiter
+        self.__wire.beginTransmission(MSA311.I2CADDR)
+        self.__wire.write(MSA311.REG_ODR)
+        self.__wire.write(MSA311.DEF_ODR)
+        self.__wire.endTransmission(True)
+
+        # set Power Mode/Bandwidth regiter
+        self.__wire.beginTransmission(MSA311.I2CADDR)
+        self.__wire.write(MSA311.REG_POWERMODE)
+        self.__wire.write(MSA311.DEF_POWERMODE)
+        self.__wire.endTransmission(True)
+
+        # set Power Mode/Bandwidth regiter
+        self.__wire.beginTransmission(MSA311.I2CADDR)
+        self.__wire.write(MSA311.REG_RESRANGE)
+        self.__wire.write(MSA311.DEF_RESRANGE)
+        self.__wire.endTransmission(True)
+
+class MMA8653(I2CParts, ACCConfig):
 
     def __init__(self, pin):
         super().__init__(pin)
