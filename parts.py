@@ -520,8 +520,8 @@ __MMA_8653_ODR_1_56 = const(0x38)
 def s16(value):
     return -(value & 0x8000) | (value & 0x7fff)
 
-def s8(v):
-    return v - 256 if v >= 0x80 else v
+def s12(v):
+    return v - 4096 if v >= 0x800 else v
 
 class Accelerometer(I2CParts, ACCConfig):
     def __init__(self, pin):
@@ -589,10 +589,13 @@ class MSA311(I2CParts, ACCConfig):
             for _ in range(6):
                 axis.append(self.__wire.read())
 
-        scale = 128
-        self.yg = -1 * s8(axis[1]) / scale * self.fs
-        self.xg = -1 * s8(axis[3]) / scale * self.fs
-        self.zg = s8(axis[5]) / scale * self.fs
+        scale = 4096 / 2
+        axis_x = axis[1] << 4 | axis[0] >> 4
+        axis_y = axis[3] << 4 | axis[2] >> 4
+        axis_z = axis[5] << 4 | axis[4] >> 4
+        self.yg = -1 * s12(axis_x) / scale * self.fs
+        self.xg = -1 * s12(axis_y) / scale * self.fs
+        self.zg = s12(axis_z) / scale * self.fs
  
         return self.xg, self.yg, self.zg
 
