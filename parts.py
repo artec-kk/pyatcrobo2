@@ -548,6 +548,9 @@ class Accelerometer(I2CParts, ACCConfig):
     def get_values(self):
         return self._acc.get_values()
 
+    def configuration(self, highres, scale):
+        return self._acc.configuration(highres, scale)
+
 
 class MSA311(I2CParts, ACCConfig):
     # https://cdn-shop.adafruit.com/product-files/5309/MSA311-V1.1-ENG.pdf
@@ -557,13 +560,14 @@ class MSA311(I2CParts, ACCConfig):
     REG_RESRANGE = const(0x0F)
     REG_ODR = const(0x10)
     REG_POWERMODE = const(0x11)
-    DEF_RESRANGE = const(0x0C)   # 2G / 8bit
+    DEF_RESRANGE = const(0x00)   # 2G / 8bit
     DEF_ODR = const(0x07)        # all axis enable / 125Hz
     DEF_POWERMODE = const(0x12)  # normal mode / 250Hz
 
     def __init__(self, pin):
         super().__init__(pin)
         self.__wire = wire.Wire(self._i2c._i2c)
+        self.fs = 2
         self._begin(False, 2)
 
     def get_x(self):
@@ -586,24 +590,23 @@ class MSA311(I2CParts, ACCConfig):
                 axis.append(self.__wire.read())
 
         scale = 128
-        self.yg = -1 * s8(axis[1]) / scale * 2
-        self.xg = -1 * s8(axis[3]) / scale * 2
-        self.zg = s8(axis[5]) / scale * 2
+        self.yg = -1 * s8(axis[1]) / scale * self.fs
+        self.xg = -1 * s8(axis[3]) / scale * self.fs
+        self.zg = s8(axis[5]) / scale * self.fs
  
         return self.xg, self.yg, self.zg
 
-    def _begin(self, highres, scale):
-        self._highres = highres
-        if self._highres:
-            self._step_factor = 0.0039
+    def configuration(self, highres, scale):
+
+        if type(scale) is int:
+            if not (scale == 2 or scale == 4 or scale == 8):
+                raise ValueError("scale param is 2, 4, or 8")
         else:
-            self._step_factor = 0.0156
+            raise TypeError("scale param is 2, 4, or 8")
+            
+        self._begin(False, scale)
 
-        if (scale == 4):
-            self._step_factor *= 2
-        elif (scale == 8):
-            self._step_factor *= 4
-
+    def _begin(self, highres, scale):
         self.__wire.begin()
 
         self.__wire.beginTransmission(MSA311.I2CADDR)
@@ -624,11 +627,14 @@ class MSA311(I2CParts, ACCConfig):
         self.__wire.write(MSA311.DEF_POWERMODE)
         self.__wire.endTransmission(True)
 
+        fs = int(scale / 4)
         # set Power Mode/Bandwidth regiter
         self.__wire.beginTransmission(MSA311.I2CADDR)
         self.__wire.write(MSA311.REG_RESRANGE)
-        self.__wire.write(MSA311.DEF_RESRANGE)
+        self.__wire.write(fs)
         self.__wire.endTransmission(True)
+        self.fs = scale
+
 
 class MMA8653(I2CParts, ACCConfig):
 
@@ -733,9 +739,9 @@ class MMA8653(I2CParts, ACCConfig):
 
         if type(scale) is int:
             if not (scale == 2 or scale == 4 or scale == 8):
-                raise ValueError("scall param is 2, 4, or 8")
+                raise ValueError("scale param is 2, 4, or 8")
         else:
-            raise TypeError("scall param is 2, 4, or 8")
+            raise TypeError("scale param is 2, 4, or 8")
             
         if type(highres) is not bool:
             raise TypeError('higres param is True / False')
